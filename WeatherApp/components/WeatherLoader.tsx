@@ -2,12 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet, View } from "react-native";
-import { useTheme } from "../context/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
 export const WeatherLoader: React.FC = () => {
-  const { isDark } = useTheme();
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -70,20 +68,6 @@ export const WeatherLoader: React.FC = () => {
     outputRange: ["0deg", "360deg"],
   });
 
-  const getBackgroundColors = () => {
-    return isDark
-      ? ["#1a1a1a", "#2d2d2d", "#404040"]
-      : ["#87CEEB", "#B0E0E6", "#E0F6FF"];
-  };
-
-  const getTextColor = () => {
-    return isDark ? "#ffffff" : "#333333";
-  };
-
-  const getParticleColor = () => {
-    return isDark ? "#778899" : "#87CEEB";
-  };
-
   const renderParticles = () => {
     const particles = [];
     for (let i = 0; i < 6; i++) {
@@ -119,7 +103,7 @@ export const WeatherLoader: React.FC = () => {
             },
           ]}
         >
-          <Ionicons name="cloud" size={20} color={getParticleColor()} />
+          <Ionicons name="cloud" size={20} color="#87CEEB" />
         </Animated.View>
       );
     }
@@ -129,7 +113,7 @@ export const WeatherLoader: React.FC = () => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={getBackgroundColors()}
+        colors={["#87CEEB", "#B0E0E6", "#E0F6FF"]}
         style={styles.background}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -172,7 +156,6 @@ export const WeatherLoader: React.FC = () => {
       <Animated.Text
         style={[
           styles.loadingText,
-          { color: getTextColor() },
           {
             opacity: pulseAnim,
           },
@@ -216,14 +199,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    shadowColor: "#007AFF",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 12,
   },
   loaderGradient: {
     flex: 1,
@@ -239,6 +214,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 18,
     fontWeight: "600",
+    color: "#333",
     marginTop: 30,
     textAlign: "center",
   },

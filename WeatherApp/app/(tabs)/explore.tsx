@@ -230,14 +230,6 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   settingItem: {
     flexDirection: "row",
@@ -290,14 +282,6 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   featureIcon: {
     fontSize: 32,

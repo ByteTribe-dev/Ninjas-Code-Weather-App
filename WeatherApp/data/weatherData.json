@@ -223,5 +223,50 @@
       "lat": -37.8136,
       "lng": 144.9631
     }
+  },
+  {
+    "id": 16,
+    "city": "Islamabad",
+    "country": "Pakistan",
+    "temperature": 25,
+    "weather": "Partly Cloudy",
+    "humidity": 55,
+    "windSpeed": 8,
+    "description": "Pleasant weather in the capital",
+    "icon": "partly-cloudy",
+    "coordinates": {
+      "lat": 33.6844,
+      "lng": 73.0479
+    }
+  },
+  {
+    "id": 17,
+    "city": "Karachi",
+    "country": "Pakistan",
+    "temperature": 28,
+    "weather": "Sunny",
+    "humidity": 65,
+    "windSpeed": 12,
+    "description": "Warm and sunny coastal weather",
+    "icon": "sunny",
+    "coordinates": {
+      "lat": 24.8607,
+      "lng": 67.0011
+    }
+  },
+  {
+    "id": 18,
+    "city": "Lahore",
+    "country": "Pakistan",
+    "temperature": 26,
+    "weather": "Clear",
+    "humidity": 60,
+    "windSpeed": 6,
+    "description": "Clear skies over the cultural capital",
+    "icon": "clear",
+    "coordinates": {
+      "lat": 31.5204,
+      "lng": 74.3587
+    }
   }
 ]

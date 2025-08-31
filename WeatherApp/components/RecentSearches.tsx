@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "../context/ThemeContext";
 import { RecentSearch } from "../types/weather";
 
 interface RecentSearchesProps {
@@ -16,47 +15,21 @@ export const RecentSearches: React.FC<RecentSearchesProps> = ({
   onSearchPress,
   onClearAll,
 }) => {
-  const { isDark } = useTheme();
-
   if (recentSearches.length === 0) {
     return null;
   }
 
-  const getContainerColors = () => {
-    return isDark
-      ? ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"]
-      : ["rgba(255, 255, 255, 0.95)", "rgba(255, 255, 255, 0.85)"];
-  };
-
-  const getItemColors = () => {
-    return isDark
-      ? ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"]
-      : ["rgba(255, 255, 255, 0.95)", "rgba(255, 255, 255, 0.85)"];
-  };
-
-  const getTextColor = () => {
-    return isDark ? "#ffffff" : "#333333";
-  };
-
-  const getSubtextColor = () => {
-    return isDark ? "#cccccc" : "#666666";
-  };
-
-  const getIconColor = () => {
-    return isDark ? "#cccccc" : "#666666";
-  };
-
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={getContainerColors()}
+        colors={["rgba(255, 255, 255, 0.95)", "rgba(255, 255, 255, 0.85)"]}
         style={styles.gradientBackground}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
 
       <View style={styles.header}>
-        <Text style={[styles.title, { color: getTextColor() }]}>
+        <Text style={[styles.title, { color: "#333333" }]}>
           Recent Searches
         </Text>
         <TouchableOpacity onPress={onClearAll} style={styles.clearButton}>
@@ -73,20 +46,23 @@ export const RecentSearches: React.FC<RecentSearchesProps> = ({
             activeOpacity={0.7}
           >
             <LinearGradient
-              colors={getItemColors()}
+              colors={[
+                "rgba(255, 255, 255, 0.95)",
+                "rgba(255, 255, 255, 0.85)",
+              ]}
               style={styles.itemGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             />
             <View style={styles.searchInfo}>
-              <Text style={[styles.cityName, { color: getTextColor() }]}>
+              <Text style={[styles.cityName, { color: "#333333" }]}>
                 {item.city}
               </Text>
-              <Text style={[styles.countryName, { color: getSubtextColor() }]}>
+              <Text style={[styles.countryName, { color: "#666666" }]}>
                 {item.country}
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={getIconColor()} />
+            <Ionicons name="chevron-forward" size={20} color="#666666" />
           </TouchableOpacity>
         ))}
       </View>
@@ -100,14 +76,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 20,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
   },
   gradientBackground: {
     position: "absolute",
@@ -144,14 +112,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 16,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   itemGradient: {
     position: "absolute",

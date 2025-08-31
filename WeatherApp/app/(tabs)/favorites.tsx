@@ -1,34 +1,29 @@
 import { WeatherCard } from "@/components/WeatherCard";
-import { useTheme } from "@/context/ThemeContext";
 import { useWeather } from "@/context/WeatherContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function FavoritesScreen() {
   const { favoriteCities } = useWeather();
-  const { isDark } = useTheme();
 
-  const getBackgroundColors = () => {
-    return isDark
-      ? ["#1a1a1a", "#2d2d2d", "#404040"]
-      : ["#f8f9fa", "#e9ecef", "#dee2e6"];
-  };
-
-  const getTextColor = () => {
-    return isDark ? "#ffffff" : "#333333";
-  };
-
-  const getSubtextColor = () => {
-    return isDark ? "#cccccc" : "#666666";
-  };
+  const favCount = favoriteCities?.length ?? 0;
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar style="dark" />
       <View style={styles.container}>
         <LinearGradient
-          colors={getBackgroundColors()}
+          colors={["#f8f9fa", "#e9ecef", "#dee2e6"]} // fixed background
           style={styles.background}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -40,33 +35,25 @@ export default function FavoritesScreen() {
           contentContainerStyle={styles.contentContainer}
         >
           <View style={styles.header}>
-            <Text style={[styles.title, { color: getTextColor() }]}>
+            <Text style={[styles.title, { color: "#333333" }]}>
               Favorite Cities
             </Text>
-            <Text style={[styles.subtitle, { color: getSubtextColor() }]}>
-              {favoriteCities.length === 0
+            <Text style={[styles.subtitle, { color: "#666666" }]}>
+              {favCount === 0
                 ? "No favorite cities yet"
-                : `${favoriteCities.length} favorite cit${
-                    favoriteCities.length === 1 ? "y" : "ies"
-                  }`}
+                : `${favCount} favorite cit${favCount === 1 ? "y" : "ies"}`}
             </Text>
           </View>
 
-          {favoriteCities.length === 0 ? (
+          {favCount === 0 ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIconContainer}>
-                <Ionicons
-                  name="heart-outline"
-                  size={64}
-                  color={getSubtextColor()}
-                />
+                <Ionicons name="heart-outline" size={64} color="#666666" />
               </View>
-              <Text style={[styles.emptyTitle, { color: getTextColor() }]}>
+              <Text style={[styles.emptyTitle, { color: "#333333" }]}>
                 No Favorites Yet
               </Text>
-              <Text
-                style={[styles.emptySubtitle, { color: getSubtextColor() }]}
-              >
+              <Text style={[styles.emptySubtitle, { color: "#666666" }]}>
                 Add cities to your favorites to see them here
               </Text>
             </View>
@@ -75,7 +62,7 @@ export default function FavoritesScreen() {
               {favoriteCities.map((city) => (
                 <WeatherCard
                   key={`${city.city}-${city.country}`}
-                  weatherData={city}
+                  weatherData={city.weatherData}
                   showFavoriteButton={true}
                 />
               ))}
@@ -88,35 +75,17 @@ export default function FavoritesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  background: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingBottom: 40,
-  },
+  container: { flex: 1 },
+  background: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  scrollView: { flex: 1 },
+  contentContainer: { paddingBottom: 120 },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: Platform.OS === "android" ? 40 : 20,
     paddingBottom: 20,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-  },
+  title: { fontSize: 32, fontWeight: "bold", marginBottom: 8 },
+  subtitle: { fontSize: 16 },
   emptyState: {
     flex: 1,
     justifyContent: "center",
@@ -124,21 +93,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     marginTop: 100,
   },
-  emptyIconContainer: {
-    marginBottom: 24,
-  },
+  emptyIconContainer: { marginBottom: 24 },
   emptyTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 12,
     textAlign: "center",
   },
-  emptySubtitle: {
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  favoritesList: {
-    paddingHorizontal: 16,
-  },
+  emptySubtitle: { fontSize: 16, textAlign: "center", lineHeight: 24 },
+  favoritesList: { paddingHorizontal: 16 },
 });

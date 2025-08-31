@@ -35,26 +35,39 @@ A beautiful and feature-rich weather application built with React Native and Exp
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd WeatherApp
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Start the JSON Server** (in a separate terminal)
+
    ```bash
    npm run json-server
    ```
+
    This will start a local server at `http://localhost:3001` serving the weather data.
 
 4. **Start the Expo development server**
+
    ```bash
    npm start
    ```
+
+   **OR** use the combined command to start both JSON server and Metro bundler:
+
+   ```bash
+   npm run dev
+   ```
+
+   This will start both the JSON server and Expo development server simultaneously.
 
 5. **Run on your device/simulator**
    - Press `i` for iOS simulator
@@ -63,7 +76,7 @@ A beautiful and feature-rich weather application built with React Native and Exp
 
 ## Project Structure 📁
 
-```
+```text
 WeatherApp/
 ├── app/                    # Expo Router screens
 │   ├── (tabs)/            # Tab navigation
@@ -104,6 +117,7 @@ The app includes weather data for the following cities:
 ## Features in Detail 🔍
 
 ### 1. City Search & Weather Display
+
 - Search for any city by name
 - Display comprehensive weather information:
   - Temperature (°C/°F)
@@ -113,33 +127,39 @@ The app includes weather data for the following cities:
   - Weather description
 
 ### 2. Recent Searches
+
 - Automatically saves recent searches
 - Quick access to previously searched cities
 - Clear all recent searches option
 - Optimized with memoization for performance
 
 ### 3. Temperature Unit Toggle
+
 - Switch between Celsius and Fahrenheit
 - Global state management with Context API
 - Automatic conversion using the formula: °F = (°C × 9/5) + 32
 
 ### 4. Favorite Cities
+
 - Mark cities as favorites with heart icon
 - Dedicated favorites screen
 - Quick access to favorite cities
 - Remove from favorites functionality
 
 ### 5. Current Location
+
 - Get weather for your current location
 - Uses device GPS with permission handling
 - Finds the closest city from available data
 
 ### 6. Offline Mode
+
 - Caches weather data locally
 - Shows last searched city when offline
 - Persistent storage with AsyncStorage
 
 ### 7. UI Enhancements
+
 - Weather-specific backgrounds and colors
 - Smooth animations and transitions
 - Responsive design for all screen sizes
@@ -186,4 +206,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Happy Weather Tracking! 🌤️**
+## Happy Weather Tracking! 🌤️

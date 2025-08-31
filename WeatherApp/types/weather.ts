@@ -42,4 +42,7 @@ export interface WeatherContextType {
   toggleTemperatureUnit: () => void;
   clearRecentSearches: () => void;
   getCurrentLocation: () => Promise<void>;
+  // New real API functions
+  getCurrentLocationWithRealAPI?: () => Promise<void>;
+  searchWeatherWithRealAPI?: (cityName: string) => Promise<void>;
 }

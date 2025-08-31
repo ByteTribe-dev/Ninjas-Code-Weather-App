@@ -1,47 +1,65 @@
-import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import React from "react";
+import { Platform } from "react-native";
 
-import { HapticTab } from '@/components/HapticTab';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { HapticTab } from "@/components/HapticTab";
+import TabBarBackground from "@/components/ui/TabBarBackground";
+import { Colors } from "@/constants/Colors";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const getTabBarStyle = () => {
+    if (Platform.OS === "ios") {
+      return {
+        position: "absolute" as const,
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderTopColor: "rgba(0, 0, 0, 0.1)",
+        borderTopWidth: 1,
+      };
+    }
+    return {
+      backgroundColor: "#ffffff",
+      borderTopColor: "rgba(0, 0, 0, 0.1)",
+      borderTopWidth: 1,
+    };
+  };
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: Colors.tint,
+        tabBarInactiveTintColor: "#8E8E93",
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopColor: 'rgba(0, 0, 0, 0.1)',
-          borderTopWidth: 1,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: -2,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 8,
-        },
-      }}>
+        tabBarBackground: TabBarBackground,
+        tabBarStyle: getTabBarStyle(),
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Weather',
-          tabBarIcon: ({ color }) => <Ionicons name="partly-sunny" size={24} color={color} />,
+          title: "Weather",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="partly-sunny" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: "Favorites",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="heart" size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />,
+          title: "Settings",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings" size={24} color={color} />
+          ),
         }}
       />
     </Tabs>

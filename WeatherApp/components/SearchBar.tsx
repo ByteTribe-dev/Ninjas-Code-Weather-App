@@ -1,35 +1,96 @@
-import React, { useState, useRef } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
+  Animated,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Animated,
-  Dimensions,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+  View,
+} from "react-native";
+import { useWeather } from "../context/WeatherContext";
 
-const { width } = Dimensions.get('window');
-
+/**
+ * Props interface for the SearchBar component
+ */
 interface SearchBarProps {
-  onSearch: (city: string) => void;
+  /** Callback function called when user searches for a city */
+  onSearch: (cityName: string) => void;
+  /** Optional placeholder text for the search input */
+  placeholder?: string;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
+/**
+ * SearchBar Component
+ *
+ * An animated search bar with location button that allows users to:
+ * - Search for cities by typing
+ * - Get weather for current location
+ * - Features smooth animations and visual feedback
+ */
+export const SearchBar: React.FC<SearchBarProps> = ({
+  onSearch,
+  placeholder = "Search for a city...",
+}) => {
+  // State management
+  const [searchText, setSearchText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  
-  const focusAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const { getCurrentLocationWithRealAPI } = useWeather();
 
-  const handleSearch = () => {
-    if (query.trim()) {
-      onSearch(query.trim());
-      setQuery('');
+  // Animation references for smooth UI interactions
+  const scaleAnim = useRef(new Animated.Value(0.95)).current; // Scale animation for focus
+  const glowAnim = useRef(new Animated.Value(0)).current; // Glow effect when focused
+  const shakeAnim = useRef(new Animated.Value(0)).current; // Shake animation for empty search
+
+  /**
+   * Handle focus/blur animations
+   * Scales up and adds glow effect when focused, reverses when blurred
+   */
+  useEffect(() => {
+    if (isFocused) {
+      // Focus animations: scale up and show glow
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1.02,
+          tension: 100,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start();
     } else {
-      // Shake animation for empty search
+      // Blur animations: scale back and hide glow
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: 100,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    }
+  }, [isFocused]);
+
+  /**
+   * Handle search submission
+   * If text exists, trigger search and clear input
+   * If empty, show shake animation as feedback
+   */
+  const handleSearch = () => {
+    if (searchText.trim()) {
+      onSearch(searchText.trim());
+      setSearchText("");
+    } else {
+      // Shake animation for empty search - provides visual feedback
       Animated.sequence([
         Animated.timing(shakeAnim, {
           toValue: 10,
@@ -50,164 +111,176 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     }
   };
 
-  const handleFocus = () => {
-    setIsFocused(true);
-    Animated.timing(focusAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    Animated.timing(focusAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
+  /**
+   * Handle location button press
+   * Triggers current location weather fetch using real API
+   */
   const handleLocationPress = () => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-    
-    // You can implement location-based search here
-    onSearch('New York'); // Default for demo
+    console.log(
+      "Location icon pressed - getting real weather for current location"
+    );
+    if (getCurrentLocationWithRealAPI) {
+      getCurrentLocationWithRealAPI();
+    } else {
+      console.log("Real weather API not available");
+    }
   };
+
+  // Interpolate glow opacity based on focus state
+  const glowOpacity = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.3],
+  });
 
   return (
     <View style={styles.container}>
+      {/* Main search input container with animations */}
       <Animated.View
         style={[
           styles.searchContainer,
           {
-            transform: [
-              { translateX: shakeAnim },
-              { scale: scaleAnim },
-            ],
-            shadowOpacity: focusAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.1, 0.3],
-            }),
+            transform: [{ scale: scaleAnim }, { translateX: shakeAnim }],
           },
         ]}
       >
+        {/* Background gradient */}
         <LinearGradient
-          colors={['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0.7)']}
+          colors={["rgba(255, 255, 255, 0.95)", "rgba(255, 255, 255, 0.85)"]}
           style={styles.gradientBackground}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         />
-        
-        <View style={styles.inputContainer}>
-          <Ionicons name="search" size={20} color="#666666" style={styles.searchIcon} />
+
+        {/* Glow effect when focused */}
+        <Animated.View
+          style={[
+            styles.glowEffect,
+            {
+              opacity: glowOpacity,
+            },
+          ]}
+        />
+
+        {/* Search input content */}
+        <View style={styles.searchContent}>
+          <Ionicons
+            name="search"
+            size={22}
+            color="#666"
+            style={styles.searchIcon}
+          />
           <TextInput
             style={styles.input}
-            placeholder="Search for a city..."
-            placeholderTextColor="#999999"
-            value={query}
-            onChangeText={setQuery}
+            placeholder={placeholder}
+            placeholderTextColor="#999"
+            value={searchText}
+            onChangeText={setSearchText}
             onSubmitEditing={handleSearch}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             returnKeyType="search"
+            autoCapitalize="words"
           />
-          {query.length > 0 && (
-            <TouchableOpacity onPress={() => setQuery('')} style={styles.clearButton}>
-              <Ionicons name="close-circle" size={20} color="#999999" />
+          {/* Clear button - only shown when text exists */}
+          {searchText.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchText("")}
+              style={styles.clearButton}
+            >
+              <Ionicons name="close-circle" size={20} color="#666" />
             </TouchableOpacity>
           )}
         </View>
-        
-        <TouchableOpacity
-          style={styles.locationButton}
-          onPress={handleLocationPress}
-        >
-          <LinearGradient
-            colors={['#007AFF', '#0056CC']}
-            style={styles.locationGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Ionicons name="location" size={20} color="#ffffff" />
-          </LinearGradient>
-        </TouchableOpacity>
       </Animated.View>
+
+      {/* Location button for current location weather */}
+      <TouchableOpacity
+        onPress={handleLocationPress}
+        style={styles.locationButton}
+      >
+        <LinearGradient
+          colors={["rgba(255, 255, 255, 0.95)", "rgba(255, 255, 255, 0.85)"]}
+          style={styles.locationGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+        <Ionicons name="location" size={22} color="#007AFF" />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  // Main container holding search bar and location button
   container: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 12,
   },
+  // Search input container with animations
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowRadius: 12,
-    elevation: 8,
-    overflow: 'hidden',
+    flex: 1,
+    borderRadius: 20,
+    overflow: "hidden",
   },
+  // Background gradient for search container
   gradientBackground: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
   },
-  inputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  // Glow effect shown when search is focused
+  glowEffect: {
+    position: "absolute",
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    borderRadius: 22,
+    backgroundColor: "#007AFF",
   },
+  // Content container for search elements
+  searchContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  // Search icon styling
   searchIcon: {
     marginRight: 12,
   },
+  // Text input styling
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#333333',
-    fontWeight: '500',
+    color: "#333",
+    paddingVertical: 4,
   },
+  // Clear button styling
   clearButton: {
     padding: 4,
+    marginLeft: 8,
   },
+  // Location button styling
   locationButton: {
-    marginRight: 8,
-  },
-  locationGradient: {
-    width: 40,
-    height: 40,
+    width: 56,
+    height: 56,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#007AFF',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  // Location button gradient background
+  locationGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
